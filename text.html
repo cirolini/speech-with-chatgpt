@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <button id="btn">Start speech recognition</button>
+  <p id="transcript">Speech transcript will display here</p>
+  <p id="response">OpenAI response will display here</p>
+  <script>
+    const btn = document.querySelector('#btn');
+    const transcriptDisplay = document.querySelector('#transcript');
+    const responseDisplay = document.querySelector('#response');
+
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.addEventListener('result', (event) => {
+      const speechToText = event.results[0][0].transcript;
+      transcriptDisplay.textContent = speechToText;
+
+      // Enviar a fala para a API do OpenAI aqui
+      fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer API_KEY'
+        },
+        body: JSON.stringify({
+          prompt: speechToText,
+          model: "text-davinci-003",
+          max_tokens: 128,
+          temperature: 0.5,
+        })
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const textResponse = data.choices[0].text;
+        responseDisplay.textContent = textResponse;
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(textResponse);
+        const voice = synth.getVoices().filter(function(voice) { return voice.name == 'Joana'; })[0];
+        utterance.voice = voice;
+        synth.speak(utterance);
+      });
+    });
+
+    btn.addEventListener('click', () => {
+      recognition.start();
+    });
+  </script>
+</body>
+</html>
