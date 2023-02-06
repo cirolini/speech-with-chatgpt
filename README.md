@@ -18,6 +18,8 @@ This is an example of a web page that uses the speech recognition API and the Op
 
 ![speech-with-chatgpt](Speech-with-chatgpt.png "Speech with ChatGPT")
 
+Video: [Youtube Video](https://www.youtube.com/watch?v=rYf4SS7EnPU)
+
 ## Considerations
 
 - Make sure your browser supports the speech recognition API
